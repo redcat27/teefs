@@ -28,9 +28,18 @@ pnpm dev              # http://localhost:3000
 
 ## 数据库（Neon）
 
+Neon 提供两种连接串，区别只在主机名，密码和库名相同：
+
+| 用途 | 主机名特征 | 环境变量 |
+| --- | --- | --- |
+| 应用运行时（serverless / 高并发） | 带 `-pooler` | `DATABASE_URL` |
+| Prisma 迁移（`migrate dev`） | 不带 `-pooler` | `DIRECT_URL` |
+
+`migrate` 必须用直连串，因为迁移过程需要创建临时 shadow database，pooled 连接不支持。
+
 1. 到 [Neon Console](https://console.neon.tech) 用 GitHub 登录，创建一个 Project（免费档即可）。
 2. 进入 Project → **Dashboard** → **Connect**，复制连接串。
-3. 把连接串写进 `.env` 的 `DATABASE_URL`。
+3. 写进 `.env`：带 `-pooler` 的填 `DATABASE_URL`，把主机名里的 `-pooler` 删掉填 `DIRECT_URL`。
 4. 建表：
 
 ```bash
@@ -40,14 +49,18 @@ pnpm db:studio        # 图形化查看数据（可选）
 
 之后每次改 `prisma/schema.prisma`，都要跑一次 `pnpm db:migrate` 把改动同步到 Neon。
 
+> 迁移在本地跑就够了，Neon 可以从本地直连。免费档项目空闲会自动休眠，首次连接大约多花 3 秒冷启动，所以 `migrate` 看着慢是正常的。
+
 ## 部署到 Vercel
 
 1. 在 [Vercel](https://vercel.com) 用 GitHub 登录。
 2. **Add New → Project** → 选择 `redcat27/teefs` 仓库 → Deploy。
-3. 在部署页的 **Environment Variables** 里加上 `DATABASE_URL`（值和本地 `.env` 一样）。
+3. 在 **Environment Variables** 里加 `DATABASE_URL`，值用带 `-pooler` 的那条。
 4. 推送代码到 `main` 就会自动重新部署。
 
-> 说明：`pnpm install` 会触发 `postinstall: prisma generate`，所以 Vercel 构建时不需要额外配置 Prisma。
+> 只需配 `DATABASE_URL`。`DIRECT_URL` 只被 Prisma CLI 用来跑迁移，运行时不需要它，Vercel 上不配也没关系。
+>
+> `pnpm install` 会触发 `postinstall: prisma generate`，所以 Vercel 构建时不需要额外配置 Prisma。
 
 ## 目录结构
 
