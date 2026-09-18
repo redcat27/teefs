@@ -1,0 +1,26 @@
+// teefs 数据库 schema
+// Neon Postgres（免费档）· 用 Prisma 管理
+//
+// 常用命令：
+//   pnpm db:migrate   本地开发时创建/应用迁移
+//   pnpm db:studio    图形化查看数据
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 留言板的留言记录。表名 messages。
+model Message {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(80)
+  email     String   @db.VarChar(200)
+  message   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("messages")
+}

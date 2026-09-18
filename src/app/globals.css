@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf9f1;
+  --foreground: #22301c;
+  --muted-foreground: #5f6d54;
+  --surface: #ffffff;
+  --line: #e5dec8;
+  --accent: #3e7d2b;
+  --accent-strong: #2b5a1c;
+  --wood: #8a5a34;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f150d;
+    --foreground: #ecf0e2;
+    --muted-foreground: #a2b094;
+    --surface: #171f13;
+    --line: #27321f;
+    --accent: #7fc061;
+    --accent-strong: #9bd67f;
+    --wood: #c68b58;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted-foreground);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-wood: var(--wood);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* 锚点跳转时给固定导航留出空间 */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
 }
